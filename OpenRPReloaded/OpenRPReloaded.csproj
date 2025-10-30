@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <BaseOutputPath>C:\Users\Bonnie20402\Documents\SampServer\gamemode</BaseOutputPath>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="SampSharp.GameMode" Version="0.9.0" />
+    </ItemGroup>
+
+</Project>

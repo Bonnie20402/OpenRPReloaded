@@ -1,0 +1,13 @@
+{
+  "profiles": {
+    "WSL": {
+      "commandName": "WSL2",
+      "distributionName": ""
+    },
+    "Profile 1": {
+      "commandName": "Executable",
+      "executablePath": "C:\\Users\\Bonnie20402\\Documents\\SampServer\\samp-server.exe",
+      "workingDirectory": "C:\\Users\\Bonnie20402\\Documents\\SampServer\\"
+    }
+  }
+}

@@ -1,42 +1,78 @@
-﻿using System;
+﻿using OpenRPReloaded.Enums;
+using SampSharp.GameMode;
+using SampSharp.GameMode.Definitions;
+using SampSharp.GameMode.Display;
+using SampSharp.GameMode.Events;
+using SampSharp.GameMode.Factories;
 using SampSharp.GameMode.Pools;
+using SampSharp.GameMode.SAMP;
 using SampSharp.GameMode.SAMP.Commands;
 using SampSharp.GameMode.World;
-using SampSharp.GameMode;
-using OpenRPReloaded.Enums;
-using SampSharp.GameMode.Factories;
-using SampSharp.GameMode.Definitions;
-using SampSharp.GameMode.Events;
+using System;
 namespace OpenRPReloaded
 {
     [PooledType]
-    public class Player : BasePlayer
+    public partial class Player : BasePlayer
     {
+        
+
+
         public override void OnConnected(EventArgs e)
         {
 
 
-            SetSpawnInfo(NoTeam, (int) SkinID.DJ, new Vector3(0.0, 0.0, 0.0), 0.0f);
+            SetSpawnInfo(NoTeam, (int) SkinID.Andre, new Vector3(0.0,0.0,0.0), 0f);
             SendClientMessage("Open RP Reloaded - Inicio do desenvolvimento: 30/10/2025");
+
+
+  
+
 
         }
 
 
+        public override void OnSpawned(SpawnEventArgs e)
+        {
 
+            Position = new Vector3(1152.9374, -1770.217, 16.59375);
+
+            var msgDlg = new MessageDialog("Teste", "Mensagem", "Sim", "nao");
+
+
+            msgDlg.Response += (object sender, DialogResponseEventArgs e) =>
+            { 
+                if (e.DialogButton == DialogButton.Left)
+                {
+                    SendClientMessage("Sim");
+                }
+                else SendClientMessage("Nao");
+            };
+
+            msgDlg.Show(this);
+
+        }
+
+
+        public override void OnClickMap(PositionEventArgs e)
+        {
+
+            this.Position = e.Position;
+            
+        }
         public override void OnExitVehicle(PlayerVehicleEventArgs e)
         {
-            GameMode.VehicleDestroyer.DestroyVehicle(e.Vehicle.Id);
-            SendClientMessage("Carro partido");
-
+            GameMode.VehicleDestroyer.DestroyVehicle(e.Vehicle);
          
         }
 
 
 
-        [Command("teste",IgnoreCase = true)]
+        [Command("pos",IgnoreCase = true)]
         public void CommandTeste()
         {
-            SendClientMessage("ola");
+            string loc = $"Localizacao: new vector3({Position.X},{Position.Y},{Position.Z};";
+            SendClientMessage(loc);
+            Console.WriteLine(loc);
         }
 
 

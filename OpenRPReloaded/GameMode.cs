@@ -22,12 +22,11 @@ namespace OpenRPReloaded
             base.OnInitialized(e);
 
             Console.WriteLine("\n----------------------------------");
-            Console.WriteLine(" Blank game mode by your name here");
+            Console.WriteLine(" Open RP Reloaded - Feito em C#     ");
             Console.WriteLine("----------------------------------\n");
 
-            SetGameModeText("Blank game mode");
-
-            // TODO: Put logic to initialize your game mode here
+            SetGameModeText("Open RP Reloaded - C# & .NET <3");
+           
         }
     }
 }

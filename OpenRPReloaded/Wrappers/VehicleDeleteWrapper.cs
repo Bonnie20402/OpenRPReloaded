@@ -1,4 +1,5 @@
 ﻿using SampSharp.Core.Natives.NativeObjects;
+using SampSharp.GameMode.World;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -16,6 +17,11 @@ namespace OpenRPReloaded.Wrappers
         public virtual bool DestroyVehicle(int vehicleid)
         {
             throw new NativeNotImplementedException();
+        }
+
+        public virtual void DestroyVehicle(BaseVehicle vehicle)
+        {
+            DestroyVehicle(vehicle.Id);
         }
 
     }

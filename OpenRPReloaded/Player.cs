@@ -1,4 +1,5 @@
 ﻿using OpenRPReloaded.Enums;
+using OpenRPReloaded.Services;
 using SampSharp.GameMode;
 using SampSharp.GameMode.Definitions;
 using SampSharp.GameMode.Display;
@@ -14,15 +15,31 @@ namespace OpenRPReloaded
     [PooledType]
     public partial class Player : BasePlayer
     {
-        
 
+        protected AccountsService AccountsService;
 
-        public override void OnConnected(EventArgs e)
+        public Player()
+        {
+            AccountsService = new AccountsService();
+        }
+
+        /// <summary>
+        /// Chamada quando o jogador cria uma conta com sucesso.
+        /// </summary>
+        public virtual void OnAccountCreation()
         {
 
+        }
 
-            SetSpawnInfo(NoTeam, (int) SkinID.Andre, new Vector3(0.0,0.0,0.0), 0f);
-            SendClientMessage("Open RP Reloaded - Inicio do desenvolvimento: 30/10/2025");
+        /// <summary>
+        /// Chamada quando o jogaodor autentica-se com sucesso.
+        /// </summary>
+        public virtual void OnAuth()
+        {
+        }
+        
+        public override void OnConnected(EventArgs e)
+        {
 
 
   
@@ -35,20 +52,6 @@ namespace OpenRPReloaded
         {
 
             Position = new Vector3(1152.9374, -1770.217, 16.59375);
-
-            var msgDlg = new MessageDialog("Teste", "Mensagem", "Sim", "nao");
-
-
-            msgDlg.Response += (object sender, DialogResponseEventArgs e) =>
-            { 
-                if (e.DialogButton == DialogButton.Left)
-                {
-                    SendClientMessage("Sim");
-                }
-                else SendClientMessage("Nao");
-            };
-
-            msgDlg.Show(this);
 
         }
 

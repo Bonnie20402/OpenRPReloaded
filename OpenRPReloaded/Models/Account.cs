@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Numerics;
 
 namespace OpenRPReloaded.Models
@@ -16,20 +17,40 @@ namespace OpenRPReloaded.Models
         [Key]
         public Guid AccountID { get; set; }
 
+
+        [MaxLength(32)]
+        [MinLength(4)]
         public string Username { get; set; }
 
         public string Password { get; set; }
 
         public DateTime CreationDate { get; set; }
 
+
+        public Boolean Disabled { get; set; }
+
+     
+        public Boolean Banned { get; set; }
+
+
+        //TODO: No futuro, criar uma lista dos logins da conta.
+        [NotMapped]
+        public DateTime LastLogin {  get; set; }
+
         public string? Email { get; set; }
 
 
-        public Account(Guid guid, string username, string password)
+        public Account()
+        {
+
+        }
+
+        public Account(Guid guid, string username, string password, DateTime creationDate)
         {
             this.AccountID = guid;
             this.Username = username;
             this.Password = password;
+            CreationDate = creationDate;
         }
     }
 }

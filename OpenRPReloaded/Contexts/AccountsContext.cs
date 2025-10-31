@@ -16,6 +16,7 @@ namespace OpenRPReloaded.Contexts
 
         public AccountsContext()
         {
+            SQLitePCL.Batteries.Init();
             var folder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory,"database");
             Directory.CreateDirectory(folder);
             DbPath = System.IO.Path.Join(folder, "accounts.db");
@@ -26,5 +27,16 @@ namespace OpenRPReloaded.Contexts
             optionsBuilder
                 .UseSqlite($"Data Source={DbPath}");
         }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Account>()
+                .Property(a => a.AccountID)
+                .HasConversion(
+                    v => v.ToString(), // Guid -> string
+                    v => Guid.Parse(v) // string -> Guid
+                );
+        }
+
     }
 }

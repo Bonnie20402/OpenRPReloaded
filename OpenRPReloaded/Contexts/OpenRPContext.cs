@@ -7,19 +7,17 @@ using System.Text;
 
 namespace OpenRPReloaded.Contexts
 {
-    public class AccountsContext : DbContext
+    public class OpenRPContext : DbContext
     {
         public DbSet<Account> Accounts { get; set; }
-
+        public DbSet<Character> Characters {get; set;}
         public string DbPath { get; }
 
-
-        public AccountsContext()
+        public OpenRPContext()
         {
-            SQLitePCL.Batteries.Init();
-            var folder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory,"database");
+            var folder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "database");
             Directory.CreateDirectory(folder);
-            DbPath = System.IO.Path.Join(folder, "accounts.db");
+            DbPath = Path.Join(folder, "openrp.db");
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -36,7 +34,11 @@ namespace OpenRPReloaded.Contexts
                     v => v.ToString(), // Guid -> string
                     v => Guid.Parse(v) // string -> Guid
                 );
+            modelBuilder.Entity<Character>()
+                .HasOne(e => e.Account)
+                .WithMany(e => e.Characters)
+                .HasForeignKey(e => e.AccountID)
+                .IsRequired();     
         }
-
     }
 }

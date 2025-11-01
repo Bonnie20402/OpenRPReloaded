@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Numerics;
@@ -11,6 +12,8 @@ namespace OpenRPReloaded.Models
     /// No futuro, pretendo adicionar autenticação de 2 fatores via discord.
     /// Ou uma maneira de recuperar a palavra-passe pelo discord.
     /// </summary>
+    /// 
+    [Table("Accounts")]
     public class Account
     {
 
@@ -38,6 +41,8 @@ namespace OpenRPReloaded.Models
         public DateTime LastLogin {  get; set; }
 
         public string? Email { get; set; }
+
+        public ICollection<Character> Characters { get; } = new List<Character>();
 
 
         public Account()

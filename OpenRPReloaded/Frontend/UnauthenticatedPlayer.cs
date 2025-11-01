@@ -1,14 +1,20 @@
 ﻿using OpenRPReloaded.Enums.Account;
 using OpenRPReloaded.Enums.States;
+using OpenRPReloaded.Managers;
 using OpenRPReloaded.Models;
 using OpenRPReloaded.Services;
 using SampSharp.GameMode.Display;
 using SampSharp.GameMode.Events;
+using SampSharp.GameMode.World;
 using System;
 using System.Collections.Generic;
 
 namespace OpenRPReloaded.Frontend
 {
+
+    /// <summary>
+    /// Representa um jogaodr que nao se autenticou.
+    /// </summary>
     public class UnauthenticatedPlayer : Player
     {
         public PlayerAuthState AuthState { get; private set;}
@@ -27,7 +33,7 @@ namespace OpenRPReloaded.Frontend
                 loginMessage =
                 "{FFFFFF}" +
                 $"Bem-vindo ao servidor, {username}\n" +
-                "Parece que já tens uma conta!\n" +
+                "Parece que ja tens uma conta!\n" +
                 "Insere a tua palavra-passe aqui em baixo:";
             }
             else
@@ -35,7 +41,7 @@ namespace OpenRPReloaded.Frontend
                 loginMessage =
                 "{FFFFFF}" +
                 $"Bem-vindo ao servidor, {username}\n" +
-                "A tua palavra-passe não está correta\n" +
+                "A tua palavra-passe nao está correta\n" +
                 "Insere a tua palavra-passe aqui em baixo:";
 
                 //TODO: Listar problemas (quando criar oserviço de mensagens)
@@ -79,9 +85,7 @@ namespace OpenRPReloaded.Frontend
                 "Parece existiu um ou mais problemas a criar a tua conta\n" +
                 "Insere a tua melhor palavra-passe aqui em baixo:";
 
-                //TODO: Listar problemas (quando criar oserviço de mensagens)
             }
-                //TODO: Criar serviço de mensagens. Para já, fica assim ^^
             var dialog = new InputDialog(
                 caption: "Autenticação de conta",
                 message: registerMessage,
@@ -203,6 +207,7 @@ namespace OpenRPReloaded.Frontend
             var accountService = new AccountsService();
             var account = accountService.GetAccountWithoutTracking(Name);
             account.LastLogin = DateTime.Now;
+            PlayerManager.AddPlayer(this,account);
             SendClientMessageToAll($"O jogador {account.Username} [ID: {account.AccountID}] autenticou-se");
         
         }
@@ -210,6 +215,13 @@ namespace OpenRPReloaded.Frontend
         public bool IsAuthenticated()
         {
             return AuthState == PlayerAuthState.Authenticated;
+        }
+
+        public override void OnDisconnected(DisconnectEventArgs e)
+        {
+            var accountService = new AccountsService();
+            var account = accountService.GetAccountWithoutTracking(Name);
+            PlayerManager.RemovePlayer(account);
         }
     }
 }

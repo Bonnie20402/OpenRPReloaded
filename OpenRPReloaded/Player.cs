@@ -1,12 +1,8 @@
-﻿using OpenRPReloaded.Enums;
-using OpenRPReloaded.Services;
+﻿using OpenRPReloaded.Services;
 using SampSharp.GameMode;
 using SampSharp.GameMode.Definitions;
-using SampSharp.GameMode.Display;
 using SampSharp.GameMode.Events;
-using SampSharp.GameMode.Factories;
 using SampSharp.GameMode.Pools;
-using SampSharp.GameMode.SAMP;
 using SampSharp.GameMode.SAMP.Commands;
 using SampSharp.GameMode.World;
 using System;
@@ -36,14 +32,11 @@ namespace OpenRPReloaded
         /// </summary>
         public virtual void OnAuth()
         {
+
         }
         
         public override void OnConnected(EventArgs e)
         {
-
-
-  
-
 
         }
 

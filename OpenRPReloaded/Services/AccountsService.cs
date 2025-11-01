@@ -13,7 +13,7 @@ namespace OpenRPReloaded.Services
     /// </summary>
     public class AccountsService 
     {
-        private AccountsContext CreateContext() => new AccountsContext();
+        private OpenRPContext CreateContext() => new OpenRPContext();
 
         public bool IsRegistered(string username)
         {

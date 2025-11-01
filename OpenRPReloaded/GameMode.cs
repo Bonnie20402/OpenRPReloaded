@@ -1,4 +1,5 @@
 ﻿using System;
+using OpenRPReloaded.Managers;
 using OpenRPReloaded.Wrappers;
 using SampSharp.Core.Natives.NativeObjects;
 using SampSharp.GameMode;
@@ -9,13 +10,13 @@ namespace OpenRPReloaded
     public class GameMode : BaseMode
         
     {
-        public static BaseVehicleFactory VehicleFactory { get; set; }
+        public static BaseVehicleFactory VehicleFactory { get; private set; }
 
-        public static VehicleDeleteWrapper VehicleDestroyer { get; set; }
+        public static VehicleDeleteWrapper VehicleDestroyer { get; private set; }
+
 
         protected override void OnInitialized(EventArgs e)
         {
-
 
             VehicleFactory = new BaseVehicleFactory(this);
             VehicleDestroyer = NativeObjectProxyFactory.CreateInstance<VehicleDeleteWrapper>();
@@ -25,7 +26,7 @@ namespace OpenRPReloaded
             Console.WriteLine(" Open RP Reloaded - Feito em C#     ");
             Console.WriteLine("----------------------------------\n");
 
-            SetGameModeText("Open RP Reloaded - C# & .NET <3");
+            SetGameModeText("Open RPG - C# & .NET");
            
         }
     }

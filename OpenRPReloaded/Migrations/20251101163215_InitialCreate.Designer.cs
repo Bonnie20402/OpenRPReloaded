@@ -6,17 +6,19 @@ using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OpenRPReloaded.Contexts;
 
+#nullable disable
+
 namespace OpenRPReloaded.Migrations
 {
     [DbContext(typeof(OpenRPContext))]
-    [Migration("20251101020217_InitialCreate")]
+    [Migration("20251101163215_InitialCreate")]
     partial class InitialCreate
     {
+        /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.32");
+            modelBuilder.HasAnnotation("ProductVersion", "9.0.10");
 
             modelBuilder.Entity("OpenRPReloaded.Models.Account", b =>
                 {
@@ -40,8 +42,8 @@ namespace OpenRPReloaded.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Username")
-                        .HasColumnType("TEXT")
-                        .HasMaxLength(32);
+                        .HasMaxLength(32)
+                        .HasColumnType("TEXT");
 
                     b.HasKey("AccountID");
 
@@ -93,6 +95,13 @@ namespace OpenRPReloaded.Migrations
                         .HasForeignKey("AccountID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Account");
+                });
+
+            modelBuilder.Entity("OpenRPReloaded.Models.Account", b =>
+                {
+                    b.Navigation("Characters");
                 });
 #pragma warning restore 612, 618
         }

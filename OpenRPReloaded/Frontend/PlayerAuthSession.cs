@@ -15,9 +15,18 @@ namespace OpenRPReloaded.Frontend
     /// <summary>
     /// Representa um jogaodr que nao se autenticou.
     /// </summary>
-    public class UnauthenticatedPlayer : Player
+    public class PlayerAuthSession
     {
-        public PlayerAuthState AuthState { get; private set;}
+        private Player _player;
+        private AccountsService _accountsService;
+
+        public event EventHandler Finished;
+
+        public PlayerAuthSession(Player player, AccountsService accountsService)
+        {
+            _player = player;
+            _accountsService = accountsService;
+        }
         /// <summary>
         /// Cria um dialogo de login para a conta
         /// </summary>
@@ -106,17 +115,16 @@ namespace OpenRPReloaded.Frontend
         /// <param name="args">Argumentos de evento</param>
         private void OnRegisterDialogResponse(Object invoker, DialogResponseEventArgs args)
         {
-            //Criar o serviço
             
             //Tentar registrar e guardar o conjunto dos resultados.
             List<AccountCreationResult> result =
-                        AccountsService.RegisterAccount(Name, args.InputText);
+                        _accountsService.RegisterAccount(_player.Name, args.InputText);
 
             //Se a conta nao contem success, entao nao foi criada, ou seja vamos re-abrir o dialogo.
             if (!result.Contains(AccountCreationResult.Success))
             {
-                var dialog = CreateRegisterDialog(Name, true, result);
-                dialog.Show(this);
+                var dialog = CreateRegisterDialog(_player.Name, true, result);
+                dialog.Show(_player);
             }
             else
             {
@@ -134,14 +142,14 @@ namespace OpenRPReloaded.Frontend
             
 
             AccountLoginResult result =
-                        AccountsService.LoginAccount(Name, args.InputText);
+                        _accountsService.LoginAccount(_player.Name, args.InputText);
 
            
             if (result != AccountLoginResult.Success)
             {
 
-                var dialog = CreateLoginDialog(Name, true, result);
-                dialog.Show(this);
+                var dialog = CreateLoginDialog(_player.Name, true, result);
+                dialog.Show(_player);
             }
             else
             {
@@ -149,79 +157,61 @@ namespace OpenRPReloaded.Frontend
             }
         }
 
+
+        public void SendWelcomeMessage()
+        {
+            for (uint i = 0; i < 32; i++) _player.SendClientMessage("");
+
+            _player.SendClientMessage("Bem-Vindo ao Open RP Reloaded - Feito em C# & .NET");
+            _player.SendClientMessage("A carregar os teus dados, espera um pouco...");
+
+            for (uint i = 0; i < 3; i++) _player.SendClientMessage("");
+        }
+
+
         /// <summary>
         /// Lógica de um jogador que acabou de ligar ao servidor (ConnectedPlayer)
         /// </summary>
         /// <param name="e"> argumentos de evento </param>
-        public override void OnConnected(EventArgs e)
+        public void Start()
         {
-            AuthState = PlayerAuthState.Unauthenticated;
+            _player.AuthState = PlayerAuthState.Unauthenticated;
 
-            for (uint i = 0; i < 32; i++) SendClientMessage("");
-
-            SendClientMessage("Bem-Vindo ao Open RP Reloaded - Feito em C# & .NET");
-            SendClientMessage("A carregar os teus dados, espera um pouco...");
-
-            for (uint i = 0; i < 3; i++) SendClientMessage("");
-
-
-            
-            //Se não tiver registrado, pedir para criar uma conta
-            if (!AccountsService.IsRegistered(Name))
+            if (!_accountsService.IsRegistered(_player.Name))
             {
-                var dialog = CreateRegisterDialog(Name);
-                dialog.Show(this);
+                var dialog = CreateRegisterDialog(_player.Name);
+                dialog.Show(_player);
             }
             else
             {
-                var dialog = CreateLoginDialog(Name);
-                dialog.Show(this);
+                var dialog = CreateLoginDialog(_player.Name);
+                dialog.Show(_player);
             }
         }
-
-
-
         /// <summary>
         /// Implementação do método de criação da conta.
         /// Futuramente usado para invocar um tutorial.
         /// </summary>
-        public override void OnAccountCreation()
+        public void OnAccountCreation()
         {
-
-            AccountsService accountsService = new AccountsService();
-            Account playerAccount = AccountsService.GetAccountWithoutTracking(Name);
-            SendClientMessageToAll($"O jogador {Name} acabou de registrar-se no servidor! Dêm boas-vindas!");
-            SendClientMessage($"ID da conta: {playerAccount.AccountID}");
-            SendClientMessage($"Hash: {playerAccount.Password}");
-            OnAuth();
+            Account playerAccount = _accountsService.GetAccountWithoutTracking(_player.Name);
+            _player.SendPlayerMessageToAll($"O jogador {_player.Name} acabou de registrar-se no servidor! Dêm boas-vindas!");
+            _player.SendClientMessage($"ID da conta: {playerAccount.AccountID}");
+            _player.SendClientMessage($"Hash: {playerAccount.Password}");
+            OnFinish();
         
         }
-
-
         /// <summary>
         /// Implementação do método de autenticação com sucesso de uma conta
         /// </summary>
-        public override void OnAuth()
+        public void OnFinish()
         {
-            AuthState = PlayerAuthState.Authenticated;
-            var accountService = new AccountsService();
-            var account = accountService.GetAccountWithoutTracking(Name);
+            _player.AuthState = PlayerAuthState.Authenticated;
+            var account = _accountsService.GetAccountWithoutTracking(_player.Name);
             account.LastLogin = DateTime.Now;
-            PlayerManager.AddPlayer(this,account);
-            SendClientMessageToAll($"O jogador {account.Username} [ID: {account.AccountID}] autenticou-se");
-        
+            PlayerManager.AddPlayer(_player,account);
+            Finished?.Invoke(this,EventArgs.Empty);
         }
 
-        public bool IsAuthenticated()
-        {
-            return AuthState == PlayerAuthState.Authenticated;
-        }
-
-        public override void OnDisconnected(DisconnectEventArgs e)
-        {
-            var accountService = new AccountsService();
-            var account = accountService.GetAccountWithoutTracking(Name);
-            PlayerManager.RemovePlayer(account);
-        }
     }
 }

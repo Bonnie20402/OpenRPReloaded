@@ -1,4 +1,6 @@
-﻿using OpenRPReloaded.Services;
+﻿using OpenRPReloaded.Enums.States;
+using OpenRPReloaded.Frontend;
+using OpenRPReloaded.Services;
 using SampSharp.GameMode;
 using SampSharp.GameMode.Definitions;
 using SampSharp.GameMode.Events;
@@ -13,31 +15,28 @@ namespace OpenRPReloaded
     {
 
         protected AccountsService AccountsService;
+        public PlayerAuthState AuthState { get; set; }
 
         public Player()
         {
             AccountsService = new AccountsService();
-        }
+        } 
 
-        /// <summary>
-        /// Chamada quando o jogador cria uma conta com sucesso.
-        /// </summary>
-        public virtual void OnAccountCreation()
-        {
 
-        }
-
-        /// <summary>
-        /// Chamada quando o jogaodor autentica-se com sucesso.
-        /// </summary>
-        public virtual void OnAuth()
-        {
-
-        }
         
         public override void OnConnected(EventArgs e)
         {
+            PlayerAuthSession _auth = new PlayerAuthSession(this, AccountsService);
+            _auth.Finished += OnAuth;
+            _auth.Start();
+           
 
+        }
+
+
+        public void OnAuth(Object invoker, EventArgs e)
+        {
+            SendClientMessage("bom diua");
         }
 
 
@@ -71,6 +70,11 @@ namespace OpenRPReloaded
             Console.WriteLine(loc);
         }
 
+
+        public bool IsAuthenticated()
+        {
+            return AuthState == PlayerAuthState.Authenticated;
+        }
 
 
         [Command("aveh")]
